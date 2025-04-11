@@ -4,18 +4,27 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 
+
+const apiKey = "01ea484ef48b424bb8abc8e7e6f58b44"
+
 export default function Home() {
   const [everythingNewsResponse, setEverythingNewsResponse] = useState([]);
 
   const url =
-    "https://newsapi.org/v2/everything?q=bitcoin&apiKey=01ea484ef48b424bb8abc8e7e6f58b44";
+    `https://newsapi.org/v2/everything?q=bitcoin&apiKey=${apiKey}`;
 
   async function getEverythingNews() {
     try {
       let data = await fetch(url);
       let response = await data.json();
-      console.log("response:", response);
-      setEverythingNewsResponse(response.articles || []); // Ensure it's an array
+      // if(response.articles.urlToImage == null || ""){
+        const filteredArticles = (response.articles || []).filter(
+          (article) => article.urlToImage && article.urlToImage.trim() !== ""
+        );
+    
+        console.log("Filtered Articles:", filteredArticles);
+        setEverythingNewsResponse(filteredArticles|| []);
+      // setEverythingNewsResponse(response.articles ); // Ensure it's an array
     } catch (error) {
       console.log("error: everythingNewsResponse", error);
     }
@@ -75,7 +84,7 @@ export default function Home() {
   return (
     <div className="container">
       <h1>Latest Bitcoin News</h1>
-      <PaginatedItems  items={everythingNewsResponse} itemsPerPage={6} />
+      <PaginatedItems  items={everythingNewsResponse} itemsPerPage={33} />
     </div>
   );
 }
